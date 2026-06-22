@@ -28,3 +28,158 @@
 2026-06-22 01:06:45 | INFO     | database.sqlite_manager | Database initialized at C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\database\_audit_test.db.
 2026-06-22 01:06:45 | INFO     | database.history_repository | Saved AI insights history id=1.
 2026-06-22 01:06:45 | INFO     | reports.pdf_generator | PDF generated at exports\reports\_audit_test.pdf.
+2026-06-22 12:01:38 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:04:32 | INFO     | utils.validators | File validation: name=ForecastIQ_Mock_Data.xlsx ext=xlsx size=11979B ok=True.
+2026-06-22 12:04:33 | INFO     | analytics.processor | Read 'ForecastIQ_Mock_Data.xlsx': 180 rows × 7 cols.
+2026-06-22 12:04:33 | INFO     | utils.column_mapper | Column detection started for 7 columns.
+2026-06-22 12:04:33 | INFO     | utils.column_mapper | Column detection complete: date=True, metrics=['revenue', 'orders', 'customers', 'expenses'], unmapped=2.
+2026-06-22 12:04:33 | INFO     | utils.validators | Dataframe validation: ok=True quality=100.0 completeness=100.0 warnings=0.
+2026-06-22 12:04:33 | INFO     | analytics.processor | Cleaned dataframe: 180 rows, metrics=['revenue', 'orders', 'customers', 'expenses'].
+2026-06-22 12:04:33 | INFO     | analytics.dataset_profiler | Profiled dataset: rows=180 cols=7 metrics=['revenue', 'orders', 'customers', 'expenses'] quality=100.0.
+2026-06-22 12:04:33 | INFO     | analytics.metrics | Computed analytics for metrics=['revenue', 'orders', 'customers', 'expenses'].
+2026-06-22 12:04:33 | INFO     | analytics.health_score | Health score computed: 66 (Good) over 5 components.
+2026-06-22 12:04:33 | INFO     | __main__ | Ingestion pipeline complete for 'ForecastIQ_Mock_Data.xlsx'.
+2026-06-22 12:05:48 | ERROR    | forecasting.forecast_manager | Comparison: model 'prophet' failed.
+Traceback (most recent call last):
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\forecasting\forecast_manager.py", line 160, in compare_models
+    results[model_key] = _run_single(forecaster, history, metric, horizon)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\forecasting\forecast_manager.py", line 178, in _run_single
+    forecast_df = forecaster.predict(history, horizon)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\forecasting\prophet_forecast.py", line 62, in predict
+    model = Prophet(**cfg.PROPHET_PARAMS)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\.venv\Lib\site-packages\prophet\forecaster.py", line 155, in __init__
+    self._load_stan_backend(stan_backend)
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\.venv\Lib\site-packages\prophet\forecaster.py", line 168, in _load_stan_backend
+    logger.debug("Loaded stan backend: %s", self.stan_backend.get_type())
+                                            ^^^^^^^^^^^^^^^^^
+AttributeError: 'Prophet' object has no attribute 'stan_backend'
+2026-06-22 12:05:48 | WARNING  | forecasting.forecast_manager | Forecast failure detail: 'Prophet' object has no attribute 'stan_backend'
+2026-06-22 12:05:48 | INFO     | forecasting.evaluation | Evaluation skipped (insufficient data, n=0): conf=10.0.
+2026-06-22 12:05:48 | INFO     | forecasting.sklearn_forecast | LinearRegression produced 6 forecast point(s).
+2026-06-22 12:05:48 | INFO     | forecasting.sklearn_forecast | LinearRegression produced 1 forecast point(s).
+2026-06-22 12:05:48 | INFO     | forecasting.evaluation | Evaluation (linear_regression): MAE=36113.60 RMSE=36113.60 MAPE=8.5 conf=91.5 (Excellent).
+2026-06-22 12:05:48 | INFO     | forecasting.forecast_manager | Forecast OK: metric=revenue model=linear_regression horizon=6 growth=-5.7% conf=91.5.
+2026-06-22 12:05:48 | INFO     | __main__ | Forecast generated & persisted: metric=revenue model=prophet horizon=6.
+2026-06-22 12:09:45 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:10:00 | INFO     | utils.validators | File validation: name=ForecastIQ_Mock_Data.xlsx ext=xlsx size=11979B ok=True.
+2026-06-22 12:10:01 | INFO     | analytics.processor | Read 'ForecastIQ_Mock_Data.xlsx': 180 rows × 7 cols.
+2026-06-22 12:10:01 | INFO     | utils.column_mapper | Column detection started for 7 columns.
+2026-06-22 12:10:01 | INFO     | utils.column_mapper | Column detection complete: date=True, metrics=['revenue', 'orders', 'customers', 'expenses'], unmapped=2.
+2026-06-22 12:10:01 | INFO     | utils.validators | Dataframe validation: ok=True quality=100.0 completeness=100.0 warnings=0.
+2026-06-22 12:10:01 | INFO     | analytics.processor | Cleaned dataframe: 180 rows, metrics=['revenue', 'orders', 'customers', 'expenses'].
+2026-06-22 12:10:01 | INFO     | analytics.dataset_profiler | Profiled dataset: rows=180 cols=7 metrics=['revenue', 'orders', 'customers', 'expenses'] quality=100.0.
+2026-06-22 12:10:01 | INFO     | analytics.metrics | Computed analytics for metrics=['revenue', 'orders', 'customers', 'expenses'].
+2026-06-22 12:10:01 | INFO     | analytics.health_score | Health score computed: 66 (Good) over 5 components.
+2026-06-22 12:10:01 | INFO     | __main__ | Ingestion pipeline complete for 'ForecastIQ_Mock_Data.xlsx'.
+2026-06-22 12:10:19 | ERROR    | forecasting.forecast_manager | Comparison: model 'prophet' failed.
+Traceback (most recent call last):
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\forecasting\forecast_manager.py", line 160, in compare_models
+    results[model_key] = _run_single(forecaster, history, metric, horizon)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\forecasting\forecast_manager.py", line 178, in _run_single
+    forecast_df = forecaster.predict(history, horizon)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\forecasting\prophet_forecast.py", line 62, in predict
+    model = Prophet(**cfg.PROPHET_PARAMS)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\.venv-audit\Lib\site-packages\prophet\forecaster.py", line 155, in __init__
+    self._load_stan_backend(stan_backend)
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\.venv-audit\Lib\site-packages\prophet\forecaster.py", line 168, in _load_stan_backend
+    logger.debug("Loaded stan backend: %s", self.stan_backend.get_type())
+                                            ^^^^^^^^^^^^^^^^^
+AttributeError: 'Prophet' object has no attribute 'stan_backend'
+2026-06-22 12:10:19 | WARNING  | forecasting.forecast_manager | Forecast failure detail: 'Prophet' object has no attribute 'stan_backend'
+2026-06-22 12:10:19 | INFO     | forecasting.evaluation | Evaluation skipped (insufficient data, n=0): conf=10.0.
+2026-06-22 12:10:19 | INFO     | forecasting.sklearn_forecast | LinearRegression produced 6 forecast point(s).
+2026-06-22 12:10:19 | INFO     | forecasting.sklearn_forecast | LinearRegression produced 1 forecast point(s).
+2026-06-22 12:10:19 | INFO     | forecasting.evaluation | Evaluation (linear_regression): MAE=36113.60 RMSE=36113.60 MAPE=8.5 conf=91.5 (Excellent).
+2026-06-22 12:10:19 | INFO     | forecasting.forecast_manager | Forecast OK: metric=revenue model=linear_regression horizon=6 growth=-5.7% conf=91.5.
+2026-06-22 12:10:19 | INFO     | __main__ | Forecast generated & persisted: metric=revenue model=prophet horizon=6.
+2026-06-22 12:11:47 | ERROR    | forecasting.forecast_manager | Comparison: model 'prophet' failed.
+Traceback (most recent call last):
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\forecasting\forecast_manager.py", line 160, in compare_models
+    results[model_key] = _run_single(forecaster, history, metric, horizon)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\forecasting\forecast_manager.py", line 178, in _run_single
+    forecast_df = forecaster.predict(history, horizon)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\forecasting\prophet_forecast.py", line 62, in predict
+    model = Prophet(**cfg.PROPHET_PARAMS)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\.venv-audit\Lib\site-packages\prophet\forecaster.py", line 155, in __init__
+    self._load_stan_backend(stan_backend)
+  File "C:\Users\brahm_v6o2ocb\Downloads\ai-forecasting-platform\.venv-audit\Lib\site-packages\prophet\forecaster.py", line 168, in _load_stan_backend
+    logger.debug("Loaded stan backend: %s", self.stan_backend.get_type())
+                                            ^^^^^^^^^^^^^^^^^
+AttributeError: 'Prophet' object has no attribute 'stan_backend'
+2026-06-22 12:11:47 | WARNING  | forecasting.forecast_manager | Forecast failure detail: 'Prophet' object has no attribute 'stan_backend'
+2026-06-22 12:11:47 | INFO     | forecasting.evaluation | Evaluation skipped (insufficient data, n=0): conf=10.0.
+2026-06-22 12:11:47 | INFO     | forecasting.sklearn_forecast | LinearRegression produced 6 forecast point(s).
+2026-06-22 12:11:47 | INFO     | forecasting.sklearn_forecast | LinearRegression produced 1 forecast point(s).
+2026-06-22 12:11:47 | INFO     | forecasting.evaluation | Evaluation (linear_regression): MAE=36113.60 RMSE=36113.60 MAPE=8.5 conf=91.5 (Excellent).
+2026-06-22 12:11:47 | INFO     | forecasting.forecast_manager | Forecast OK: metric=revenue model=linear_regression horizon=6 growth=-5.7% conf=91.5.
+2026-06-22 12:11:47 | INFO     | __main__ | Forecast generated & persisted: metric=revenue model=linear_regression horizon=6.
+2026-06-22 12:15:44 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:15:47 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:15:51 | INFO     | utils.validators | File validation: name=ForecastIQ_Mock_Data.xlsx ext=xlsx size=11979B ok=True.
+2026-06-22 12:15:51 | INFO     | analytics.processor | Read 'ForecastIQ_Mock_Data.xlsx': 180 rows × 7 cols.
+2026-06-22 12:15:51 | INFO     | utils.column_mapper | Column detection started for 7 columns.
+2026-06-22 12:15:51 | INFO     | utils.column_mapper | Column detection complete: date=True, metrics=['revenue', 'orders', 'customers', 'expenses'], unmapped=2.
+2026-06-22 12:15:51 | INFO     | utils.validators | Dataframe validation: ok=True quality=100.0 completeness=100.0 warnings=0.
+2026-06-22 12:15:51 | INFO     | analytics.processor | Cleaned dataframe: 180 rows, metrics=['revenue', 'orders', 'customers', 'expenses'].
+2026-06-22 12:15:51 | INFO     | analytics.dataset_profiler | Profiled dataset: rows=180 cols=7 metrics=['revenue', 'orders', 'customers', 'expenses'] quality=100.0.
+2026-06-22 12:15:51 | INFO     | analytics.metrics | Computed analytics for metrics=['revenue', 'orders', 'customers', 'expenses'].
+2026-06-22 12:15:51 | INFO     | analytics.health_score | Health score computed: 66 (Good) over 5 components.
+2026-06-22 12:15:51 | INFO     | __main__ | Ingestion pipeline complete for 'ForecastIQ_Mock_Data.xlsx'.
+2026-06-22 12:16:15 | INFO     | utils.column_mapper | Column detection started for 7 columns.
+2026-06-22 12:16:15 | INFO     | utils.column_mapper | Column detection complete: date=True, metrics=['revenue', 'orders', 'customers', 'expenses'], unmapped=2.
+2026-06-22 12:16:15 | INFO     | utils.validators | Dataframe validation: ok=True quality=100.0 completeness=100.0 warnings=0.
+2026-06-22 12:16:28 | INFO     | forecasting.prophet_forecast | Prophet produced 6 forecast point(s).
+2026-06-22 12:16:28 | INFO     | forecasting.prophet_forecast | Prophet produced 1 forecast point(s).
+2026-06-22 12:16:28 | INFO     | forecasting.evaluation | Evaluation (prophet): MAE=34801.28 RMSE=34801.28 MAPE=8.19 conf=91.8 (Excellent).
+2026-06-22 12:16:28 | INFO     | forecasting.forecast_manager | Forecast OK: metric=revenue model=prophet horizon=6 growth=-6.0% conf=91.8.
+2026-06-22 12:16:28 | INFO     | forecasting.sklearn_forecast | LinearRegression produced 6 forecast point(s).
+2026-06-22 12:16:28 | INFO     | forecasting.sklearn_forecast | LinearRegression produced 1 forecast point(s).
+2026-06-22 12:16:28 | INFO     | forecasting.evaluation | Evaluation (linear_regression): MAE=36113.60 RMSE=36113.60 MAPE=8.5 conf=91.5 (Excellent).
+2026-06-22 12:16:28 | INFO     | forecasting.forecast_manager | Forecast OK: metric=revenue model=linear_regression horizon=6 growth=-5.7% conf=91.5.
+2026-06-22 12:16:28 | INFO     | __main__ | Forecast generated & persisted: metric=revenue model=prophet horizon=6.
+2026-06-22 12:16:39 | INFO     | forecasting.prophet_forecast | Prophet produced 6 forecast point(s).
+2026-06-22 12:16:40 | INFO     | forecasting.prophet_forecast | Prophet produced 1 forecast point(s).
+2026-06-22 12:16:40 | INFO     | forecasting.evaluation | Evaluation (prophet): MAE=34801.28 RMSE=34801.28 MAPE=8.19 conf=91.8 (Excellent).
+2026-06-22 12:16:40 | INFO     | forecasting.forecast_manager | Forecast OK: metric=revenue model=prophet horizon=6 growth=-6.0% conf=91.8.
+2026-06-22 12:16:40 | INFO     | forecasting.sklearn_forecast | LinearRegression produced 6 forecast point(s).
+2026-06-22 12:16:40 | INFO     | forecasting.sklearn_forecast | LinearRegression produced 1 forecast point(s).
+2026-06-22 12:16:40 | INFO     | forecasting.evaluation | Evaluation (linear_regression): MAE=36113.60 RMSE=36113.60 MAPE=8.5 conf=91.5 (Excellent).
+2026-06-22 12:16:40 | INFO     | forecasting.forecast_manager | Forecast OK: metric=revenue model=linear_regression horizon=6 growth=-5.7% conf=91.5.
+2026-06-22 12:16:40 | INFO     | __main__ | Forecast generated & persisted: metric=revenue model=linear_regression horizon=6.
+2026-06-22 12:17:07 | INFO     | ai.insight_engine | Insights: skipping unavailable provider 'groq'.
+2026-06-22 12:17:08 | INFO     | ai.insight_engine | Insights: skipping unavailable provider 'ollama'.
+2026-06-22 12:17:08 | INFO     | ai.insight_engine | Rule-based insights: 5 insights, 2 risks, 2 opportunities.
+2026-06-22 12:17:08 | INFO     | ai.insight_engine | Insights generated using 'rule_based'.
+2026-06-22 12:17:08 | INFO     | ai.recommendation_engine | Recommendations: skipping unavailable provider 'groq'.
+2026-06-22 12:17:09 | INFO     | ai.recommendation_engine | Recommendations: skipping unavailable provider 'ollama'.
+2026-06-22 12:17:09 | INFO     | ai.recommendation_engine | Rule-based recommendations: 5 items.
+2026-06-22 12:17:09 | INFO     | ai.recommendation_engine | Recommendations generated using 'rule_based'.
+2026-06-22 12:17:09 | INFO     | __main__ | AI intelligence persisted (provider=rule_based).
+2026-06-22 12:18:18 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:18:18 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:18:23 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:18:23 | INFO     | reports.report_builder | Report object built for 'ForecastIQ_Mock_Data.xlsx'.
+2026-06-22 12:18:23 | INFO     | reports.pdf_generator | PDF generated at exports\reports\ForecastIQ_ForecastIQ_Mock_Data.xlsx_20260622_064823.pdf.
+2026-06-22 12:18:23 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:18:23 | INFO     | database.history_repository | Saved dataset history id=1 name=ForecastIQ_Mock_Data.xlsx.
+2026-06-22 12:18:23 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:18:23 | INFO     | database.history_repository | Saved analytics history id=1.
+2026-06-22 12:18:23 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:18:23 | INFO     | database.history_repository | Saved forecast history id=1.
+2026-06-22 12:18:23 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:18:23 | INFO     | database.history_repository | Saved AI insights history id=1.
+2026-06-22 12:18:23 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:18:23 | INFO     | database.history_repository | Saved report history id=1 title=ForecastIQ Executive Report.
+2026-06-22 12:18:23 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:18:23 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
+2026-06-22 12:18:23 | INFO     | __main__ | Report generated: exports\reports\ForecastIQ_ForecastIQ_Mock_Data.xlsx_20260622_064823.pdf
+2026-06-22 12:18:33 | INFO     | database.sqlite_manager | Database initialized at database\forecastiq.db.
