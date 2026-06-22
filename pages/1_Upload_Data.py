@@ -22,6 +22,8 @@ import streamlit as st
 from analytics import dataset_profiler, health_score, metrics, processor
 from components import error_states, theme
 from components.sidebar import render_sidebar
+from database import history_repository
+from rag import index_analytics, index_profile
 from utils import column_mapper, session_manager, validators
 from utils.logger import get_logger
 
@@ -111,8 +113,21 @@ def _run_pipeline(data: bytes, file_name: str, size_bytes: int) -> dict[str, Any
             session_manager.REPORT_DATA: None,
             session_manager.REPORT_HISTORY: None,
             session_manager.GENERATED_REPORTS: None,
+            session_manager.CHAT_HISTORY: [],
+            session_manager.CHAT_DATASET_KEY: None,
+            session_manager.DATASET_ID: None,
         }
     )
+    profile_dict = profile.to_dict()
+    try:
+        dataset_id = history_repository.save_dataset(
+            file_name, profile_dict, uploaded={"name": file_name, "size_bytes": size_bytes}
+        )
+        session_manager.set_state(session_manager.DATASET_ID, dataset_id)
+        index_profile(dataset_id, profile_dict)
+        index_analytics(dataset_id, analytics_payload)
+    except Exception:
+        logger.exception("Dataset persistence / RAG indexing skipped.")
     logger.info("Ingestion pipeline complete for '%s'.", file_name)
     return {
         "raw_df": raw_df,
@@ -327,9 +342,6 @@ def main() -> None:
         f"'{uploaded.name}' processed successfully.", title="Upload complete"
     )
     _render_artifacts(artifacts)
-
-    st.page_link("pages/2_Business_Analytics.py", label="View Business Analytics",
-                 icon=":material/arrow_forward:")
 
 
 if __name__ == "__main__":

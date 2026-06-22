@@ -126,6 +126,10 @@ class BaseAIProvider(ABC):
     def generate_recommendations(self, context: dict[str, Any]) -> dict[str, Any]:
         """Return partial contract: recommendations."""
 
+    def chat(self, messages: list[dict[str, str]], *, context: str = "") -> str:
+        """Multi-turn chat completion. Override in LLM providers."""
+        raise NotImplementedError(f"{self.name} does not support chat.")
+
 
 def parse_llm_json(text: str) -> dict[str, Any]:
     """Best-effort JSON extraction from an LLM response."""

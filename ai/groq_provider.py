@@ -36,6 +36,27 @@ class GroqProvider(BaseAIProvider):
         data = parse_llm_json(raw)
         return _normalize_recommendations(data, self.name)
 
+    def chat(self, messages: list[dict[str, str]], *, context: str = "") -> str:
+        settings = get_settings()
+        if not settings.groq_api_key:
+            raise RuntimeError("Groq API key not configured.")
+        from groq import Groq
+
+        system = (
+            "You are the AI Business Analyst for ForecastIQ. "
+            "Answer only using the provided data context. Be specific and cite numbers. "
+            "If the context is insufficient, say so clearly.\n\n"
+            f"DATA CONTEXT:\n{context}"
+        )
+        client = Groq(api_key=settings.groq_api_key)
+        response = client.chat.completions.create(
+            model=settings.groq_model,
+            messages=[{"role": "system", "content": system}, *messages],
+            temperature=0.3,
+            max_tokens=1200,
+        )
+        return (response.choices[0].message.content or "").strip()
+
     def _complete(self, prompt: str) -> str:
         settings = get_settings()
         if not settings.groq_api_key:

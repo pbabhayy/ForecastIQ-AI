@@ -75,7 +75,6 @@ def generate_rule_based_insights(
     rev_growth = float(revenue.get("growth_pct") or 0)
     rev_trend = revenue.get("trend") or "stable"
     conf_score = float(evaluation.get("confidence_score") or 0)
-    conf_rating = evaluation.get("confidence_rating") or "—"
 
     # --- Business summary insight ---
     period = profile.get("date_range") or "the analyzed period"
@@ -163,19 +162,31 @@ def generate_rule_based_insights(
         }
     )
 
-    # --- Confidence ---
-    insights.append(
-        {
-            "category": "Confidence Commentary",
-            "title": f"Forecast confidence: {conf_rating}",
-            "body": (
-                f"Model confidence score is {conf_score:.0f}/100. "
-                f"{evaluation.get('notes') or 'Generate more history for stronger backtests.'}"
-            ),
-        }
-    )
+    # --- Forecast accuracy (aligned with Forecasting page labels) ---
+    from forecasting import evaluation as eval_mod
 
-    if conf_score < 50:
+    acc = eval_mod.accuracy_display(evaluation)
+    if forecast.get("ok"):
+        insights.append(
+            {
+                "category": "Forecast Accuracy",
+                "title": f"{acc['label']}: {acc['value'].split('/')[0]}",
+                "body": (
+                    f"{acc['caption']}. "
+                    f"{evaluation.get('notes') or ''}"
+                ).strip(),
+            }
+        )
+    else:
+        insights.append(
+            {
+                "category": "Forecast Accuracy",
+                "title": "No forecast available",
+                "body": "Generate a forecast on the Forecasting page to unlock forward-looking insights.",
+            }
+        )
+
+    if conf_score < 50 and evaluation.get("method") == "holdout_backtest":
         risks.append(
             {
                 "title": "Low forecast confidence",

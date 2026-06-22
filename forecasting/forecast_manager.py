@@ -162,7 +162,7 @@ def compare_models(
             logger.exception("Comparison: model '%s' failed.", model_key)
             results[model_key] = _failure_result(
                 metric, model_key, horizon,
-                f"{forecaster.label} could not be generated.", detail=str(exc),
+                f"{forecaster.label} failed: {exc}", detail=str(exc),
             )
     return results
 

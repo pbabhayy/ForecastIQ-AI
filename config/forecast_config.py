@@ -52,6 +52,8 @@ FREQUENCY: Final[str] = "MS"
 MIN_FORECAST_POINTS: Final[int] = 4
 #: Minimum monthly observations required to run a hold-out backtest.
 MIN_EVAL_POINTS: Final[int] = 6
+#: Minimum monthly points before enabling Prophet yearly seasonality.
+MIN_YEARLY_SEASONALITY_POINTS: Final[int] = 24
 #: Fraction of history held out for backtesting (clamped to keep train ≥ 2).
 TEST_RATIO: Final[float] = 0.2
 #: Confidence-interval width for forecast bands (0–1).

@@ -57,6 +57,27 @@ class OllamaProvider(BaseAIProvider):
         raw = self._complete(_recommendations_prompt(context))
         return _normalize_recommendations(parse_llm_json(raw), self.name)
 
+    def chat(self, messages: list[dict[str, str]], *, context: str = "") -> str:
+        settings = get_settings()
+        import ollama
+
+        system = (
+            "You are the AI Business Analyst for ForecastIQ. "
+            "Answer only using the provided data context. Be specific and cite numbers. "
+            "If the context is insufficient, say so clearly.\n\n"
+            f"DATA CONTEXT:\n{context}"
+        )
+        client = ollama.Client(host=settings.ollama_base_url, timeout=120.0)
+        response = client.chat(
+            model=settings.ollama_model,
+            messages=[{"role": "system", "content": system}, *messages],
+            options={"temperature": 0.3},
+        )
+        content = response.get("message", {}).get("content", "")
+        if not content.strip():
+            raise ValueError("Empty Ollama chat response.")
+        return content.strip()
+
     def _complete(self, prompt: str) -> str:
         settings = get_settings()
         try:

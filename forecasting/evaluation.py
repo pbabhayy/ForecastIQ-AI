@@ -115,6 +115,31 @@ def rate_confidence(score: float) -> str:
     return "Low"
 
 
+def accuracy_display(evaluation: dict[str, Any] | None) -> dict[str, str]:
+    """Return consistent UI labels for forecast accuracy across pages.
+
+    When a hold-out backtest ran, the score is ``100 − MAPE`` ("Forecast Accuracy").
+    When history is too short for a backtest, the score reflects data sufficiency only.
+    """
+    evaluation = evaluation or {}
+    score = float(evaluation.get("confidence_score") or 0)
+    rating = str(evaluation.get("confidence_rating") or "—")
+    method = str(evaluation.get("method") or "")
+    if method == "insufficient_data":
+        return {
+            "label": "Data Sufficiency",
+            "value": f"{score:.0f}/100",
+            "caption": f"Not enough history for backtest · {rating}",
+        }
+    mape = evaluation.get("mape")
+    mape_note = f"MAPE {mape:.1f}%" if mape is not None else "hold-out backtest"
+    return {
+        "label": "Forecast Accuracy",
+        "value": f"{score:.0f}/100",
+        "caption": f"{mape_note} · {rating}",
+    }
+
+
 # --------------------------------------------------------------------------- #
 # Internals
 # --------------------------------------------------------------------------- #

@@ -19,6 +19,7 @@ from ai.insight_engine import generate_insights
 from ai.recommendation_engine import generate_recommendations
 from components import empty_states, error_states, theme
 from components.sidebar import render_sidebar
+from rag import index_ai_insights
 from utils import session_manager
 from utils.logger import get_logger
 
@@ -39,11 +40,17 @@ def _bootstrap() -> None:
 
 
 def _load_payloads() -> tuple[dict, dict, dict, dict, dict]:
+    forecast = session_manager.get_state(session_manager.FORECASTS) or {}
+    evaluation = (
+        forecast.get("evaluation")
+        or session_manager.get_state(session_manager.EVALUATION_RESULTS)
+        or {}
+    )
     return (
         session_manager.get_state(session_manager.ANALYTICS) or {},
         session_manager.get_state(session_manager.HEALTH_METRICS) or {},
-        session_manager.get_state(session_manager.FORECASTS) or {},
-        session_manager.get_state(session_manager.EVALUATION_RESULTS) or {},
+        forecast,
+        evaluation,
         session_manager.get_state(session_manager.DATASET_PROFILE) or {},
     )
 
@@ -65,6 +72,11 @@ def _generate_and_persist() -> dict[str, Any]:
         }
     )
     logger.info("AI intelligence persisted (provider=%s).", combined.get("provider"))
+    dataset_id = session_manager.get_state(session_manager.DATASET_ID)
+    try:
+        index_ai_insights(dataset_id, combined)
+    except Exception:
+        logger.exception("RAG AI indexing skipped.")
     return combined
 
 

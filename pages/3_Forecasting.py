@@ -22,7 +22,9 @@ from analytics import metrics
 from components import empty_states, error_states, theme
 from components.sidebar import render_sidebar
 from config import forecast_config as cfg
+from forecasting import evaluation as eval_mod
 from forecasting import forecast_manager as fm
+from rag import index_forecast
 from utils import column_mapper, session_manager
 from utils.logger import get_logger
 from visualizations import comparison_charts, forecast_charts, heatmaps
@@ -100,7 +102,9 @@ def _generate(clean_df: pd.DataFrame, metric: str, horizon: int, model: str) -> 
     """Run both models, persist the unified contract + comparison, via session."""
     with st.spinner("Generating forecasts and evaluating accuracy…"):
         comparison = fm.compare_models(clean_df, metric, horizon)
-    primary = comparison.get(model) or fm.generate_forecast(clean_df, metric, horizon, model)
+    primary = comparison.get(model)
+    if not primary or not primary.get("ok"):
+        primary = fm.generate_forecast(clean_df, metric, horizon, model)
 
     session_manager.update_state(
         {
@@ -120,6 +124,11 @@ def _generate(clean_df: pd.DataFrame, metric: str, horizon: int, model: str) -> 
     )
     logger.info("Forecast generated & persisted: metric=%s model=%s horizon=%d.",
                 metric, model, horizon)
+    dataset_id = session_manager.get_state(session_manager.DATASET_ID)
+    try:
+        index_forecast(dataset_id, primary)
+    except Exception:
+        logger.exception("RAG forecast indexing skipped.")
 
 
 # --------------------------------------------------------------------------- #
@@ -138,18 +147,16 @@ def _render_kpis(primary: dict[str, Any]) -> None:
     with cols[2]:
         theme.metric_card("Weakest Month", primary["lowest_month"], icon="📉")
     with cols[3]:
-        theme.metric_card("Confidence", f"{evaluation.get('confidence_score', 0):.0f}/100",
-                          icon="✅", caption=evaluation.get("confidence_rating", "—"))
+        acc = eval_mod.accuracy_display(evaluation)
+        theme.metric_card(acc["label"], acc["value"],
+                          icon="✅", caption=acc["caption"])
     st.caption(f"Annualized projection: {fmt(primary.get('annual_projection'))}")
 
 
 def _render_charts(primary: dict[str, Any]) -> None:
     theme.section_header("Forecast trajectory", "Historical vs forecast with confidence band")
-    with st.container():
-        st.markdown('<div class="chart-container">', unsafe_allow_html=True)
-        st.plotly_chart(forecast_charts.forecast_chart(primary), use_container_width=True,
-                        config={"displaylogo": False})
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.plotly_chart(forecast_charts.forecast_chart(primary), use_container_width=True,
+                    config={"displaylogo": False})
 
     left, right = st.columns([1, 1.3])
     with left:
@@ -194,8 +201,9 @@ def _render_evaluation(primary: dict[str, Any]) -> None:
     with cols[2]:
         theme.metric_card("MAPE", _fmt(evaluation.get("mape"), "%"), icon="％")
     with cols[3]:
-        theme.metric_card("Confidence", f"{evaluation.get('confidence_score', 0):.0f}/100",
-                          icon="🎯", caption=evaluation.get("confidence_rating", "—"))
+        acc = eval_mod.accuracy_display(evaluation)
+        theme.metric_card(acc["label"], acc["value"],
+                          icon="🎯", caption=acc["caption"])
 
 
 def _render_comparison(metadata: dict[str, Any]) -> None:
@@ -242,7 +250,7 @@ def _render_metadata(metadata: dict[str, Any], primary: dict[str, Any]) -> None:
                 <span>{evaluation.get('train_size', 0)} / {evaluation.get('test_size', 0)} months</span>
             </div>
             <div style="display:flex; justify-content:space-between; padding:0.2rem 0;">
-                <span class="text-muted">Generated</span><span>{primary.get('generated_at', '—')}</span>
+                <span class="text-muted">Generated</span><span>{theme.format_display_timestamp(primary.get('generated_at'))}</span>
             </div>
             <div style="margin-top:0.5rem; color:var(--fiq-muted); font-size:0.82rem;">
                 {evaluation.get('notes', '')}
@@ -290,7 +298,8 @@ def main() -> None:
 
     metric, horizon, model, generate = _render_controls(present)
     if generate:
-        _generate(clean_df, metric, horizon, model)
+        with st.spinner("Generating forecasts and evaluating accuracy…"):
+            _generate(clean_df, metric, horizon, model)
 
     primary = session_manager.get_state(session_manager.FORECASTS)
     metadata = session_manager.get_state(session_manager.FORECAST_METADATA) or {}

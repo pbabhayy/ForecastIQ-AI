@@ -111,7 +111,7 @@ def confidence_chart(result: dict[str, Any], *, height: int = 260) -> go.Figure:
             mode="gauge+number",
             value=score,
             number=dict(suffix=" / 100", font=dict(size=30)),
-            title=dict(text=f"Confidence · {rating}", font=dict(size=14)),
+            title=dict(text=f"Forecast Accuracy · {rating}", font=dict(size=14)),
             gauge=dict(
                 axis=dict(range=[0, 100], tickcolor=MUTED),
                 bar=dict(color=bar_color, thickness=0.3),

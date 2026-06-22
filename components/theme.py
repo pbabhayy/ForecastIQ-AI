@@ -15,6 +15,8 @@ pages apply the *classes* defined here; they never write raw CSS.
 
 from __future__ import annotations
 
+import html as html_lib
+from datetime import datetime
 from typing import Final
 
 import streamlit as st
@@ -64,13 +66,47 @@ def configure_page(page_title: str, *, page_icon: str = PAGE_ICON) -> None:
 # --------------------------------------------------------------------------- #
 # Global CSS injection
 # --------------------------------------------------------------------------- #
-def inject_premium_css() -> None:
+def inject_premium_css(theme_mode: str | None = None) -> None:
     """Inject the global premium design system stylesheet.
 
-    Idempotent in effect — Streamlit re-runs the script on every interaction,
-    re-injecting the same stylesheet, which simply re-applies identical rules.
+    Args:
+        theme_mode: ``"dark"`` or ``"light"``. When ``None``, reads session state.
     """
-    st.markdown(_PREMIUM_CSS, unsafe_allow_html=True)
+    mode = (theme_mode or _current_theme_mode()).lower()
+    if mode == "light":
+        st.markdown(_LIGHT_CSS, unsafe_allow_html=True)
+    else:
+        st.markdown(_PREMIUM_CSS, unsafe_allow_html=True)
+
+
+def _current_theme_mode() -> str:
+    """Return active theme from session (defaults to dark)."""
+    try:
+        from utils import session_manager
+
+        return str(session_manager.get_state(session_manager.THEME_MODE, "dark") or "dark")
+    except Exception:
+        return "dark"
+
+
+def _render_html(fragment: str) -> None:
+    """Render raw HTML (``st.html`` when available, else ``st.markdown``)."""
+    if hasattr(st, "html"):
+        st.html(fragment)
+    else:
+        st.markdown(fragment, unsafe_allow_html=True)
+
+
+def format_display_timestamp(iso_value: str | None) -> str:
+    """Format an ISO-8601 timestamp for UI display."""
+    if not iso_value:
+        return "—"
+    try:
+        normalized = iso_value.replace("Z", "+00:00")
+        dt = datetime.fromisoformat(normalized)
+        return dt.strftime("%b %d, %Y · %H:%M UTC")
+    except (TypeError, ValueError):
+        return str(iso_value)
 
 
 # --------------------------------------------------------------------------- #
@@ -137,8 +173,11 @@ def metric_card(
         icon: Optional emoji/glyph rendered in the card corner.
         caption: Optional small caption beneath the value.
     """
-    icon_html = f'<div class="metric-icon">{icon}</div>' if icon else ""
-    caption_html = f'<div class="metric-caption">{caption}</div>' if caption else ""
+    icon_html = f'<div class="metric-icon">{html_lib.escape(icon)}</div>' if icon else ""
+    safe_label = html_lib.escape(label)
+    safe_value = html_lib.escape(value)
+    safe_caption = html_lib.escape(caption) if caption else ""
+    caption_html = f'<div class="metric-caption">{safe_caption}</div>' if safe_caption else ""
     delta_html = ""
     if delta is not None:
         tone = (
@@ -146,21 +185,24 @@ def metric_card(
             if delta_positive is None
             else ("up" if delta_positive else "down")
         )
-        delta_html = f'<div class="metric-delta {tone}">{delta}</div>'
+        delta_html = f'<div class="metric-delta {tone}">{html_lib.escape(delta)}</div>'
 
-    st.markdown(
+    value_class = "metric-value"
+    if label.lower() == "date range":
+        value_class = "metric-value metric-value-compact"
+
+    _render_html(
         f"""
         <div class="metric-card fade-in">
             <div class="metric-card-top">
-                <span class="metric-label">{label}</span>
+                <span class="metric-label">{safe_label}</span>
                 {icon_html}
             </div>
-            <div class="metric-value">{value}</div>
+            <div class="{value_class}">{safe_value}</div>
             {delta_html}
             {caption_html}
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
 
@@ -291,7 +333,8 @@ p, span, label, li { color: var(--fiq-text); }
 .metric-label { font-size: 0.82rem; font-weight: 500; color: var(--fiq-muted); }
 .metric-icon { font-size: 1rem; opacity: 0.85; }
 .metric-value { font-size: 1.7rem; font-weight: 800; margin-top: 0.4rem; letter-spacing: -0.02em; }
-.metric-caption { font-size: 0.75rem; color: var(--fiq-muted); margin-top: 0.3rem; }
+.metric-value-compact { font-size: 1.05rem; font-weight: 700; line-height: 1.35; white-space: nowrap; }
+.metric-caption { font-size: 0.75rem; color: var(--fiq-muted); margin-top: 0.35rem; line-height: 1.35; }
 .metric-delta {
     display: inline-flex; align-items: center; gap: 0.25rem;
     font-size: 0.78rem; font-weight: 600; margin-top: 0.5rem;
@@ -334,7 +377,13 @@ p, span, label, li { color: var(--fiq-text); }
     border-radius: var(--fiq-radius);
     padding: 1.1rem 1.25rem;
     box-shadow: var(--fiq-shadow);
-    display: flex; align-items: center; justify-content: center;
+}
+[data-testid="stPlotlyChart"] {
+    min-height: 260px;
+    background: var(--fiq-surface);
+    border: 1px solid var(--fiq-border);
+    border-radius: var(--fiq-radius);
+    padding: 0.35rem;
 }
 .chart-placeholder-inner { text-align: center; color: var(--fiq-muted); }
 .chart-placeholder-icon { font-size: 2rem; opacity: 0.6; }
@@ -591,3 +640,24 @@ hr { border-color: var(--fiq-border); }
 .stDataFrame { border-radius: var(--fiq-radius); overflow: hidden; }
 </style>
 """
+
+# Light theme — same structure, swapped palette (Phase 4).
+_LIGHT_CSS: Final[str] = _PREMIUM_CSS.replace(
+    "--fiq-bg: #0B0F19", "--fiq-bg: #F8FAFC"
+).replace(
+    "--fiq-surface: #111827", "--fiq-surface: #FFFFFF"
+).replace(
+    "--fiq-surface-alt: #0F1623", "--fiq-surface-alt: #F1F5F9"
+).replace(
+    "--fiq-border: #1F2937", "--fiq-border: #E2E8F0"
+).replace(
+    "--fiq-text: #F9FAFB", "--fiq-text: #0F172A"
+).replace(
+    "--fiq-muted: #9CA3AF", "--fiq-muted: #64748B"
+).replace(
+    "radial-gradient(1200px 600px at 80% -10%, rgba(59,130,246,0.08), transparent 60%),\n        radial-gradient(900px 500px at -10% 10%, rgba(59,130,246,0.05), transparent 55%),\n        var(--fiq-bg);",
+    "var(--fiq-bg);",
+).replace(
+    "background: linear-gradient(90deg, #131b2b 25%, #1b2435 37%, #131b2b 63%);",
+    "background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 37%, #e2e8f0 63%);",
+)

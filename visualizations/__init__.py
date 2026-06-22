@@ -54,10 +54,13 @@ def apply_dark_layout(
     Returns:
         The same figure, styled.
     """
+    from utils import session_manager
+
+    is_light = str(session_manager.get_state(session_manager.THEME_MODE, "dark")).lower() == "light"
     fig.update_layout(
-        template="plotly_dark",
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
+        template="plotly_white" if is_light else "plotly_dark",
+        paper_bgcolor=tokens.SURFACE if not is_light else "#FFFFFF",
+        plot_bgcolor=tokens.SURFACE if not is_light else "#FFFFFF",
         font=dict(family=tokens.FONT_FAMILY, size=tokens.FONT_SIZE, color=tokens.TEXT),
         title=dict(text=title or "", font=dict(size=15, color=tokens.TEXT), x=0.01, xanchor="left"),
         margin=dict(l=10, r=10, t=40 if title else 16, b=10),

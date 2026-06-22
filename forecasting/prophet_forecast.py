@@ -58,12 +58,21 @@ class ProphetForecaster:
         frame = history_df[["ds", "y"]].dropna().copy()
         frame["ds"] = pd.to_datetime(frame["ds"])
         frame["y"] = frame["y"].astype(float)
+        n_points = len(frame)
 
-        model = Prophet(**cfg.PROPHET_PARAMS)
-        model.fit(frame)
+        params = dict(cfg.PROPHET_PARAMS)
+        # Yearly seasonality needs ~2 years of monthly data; disable when history is short.
+        if n_points < cfg.MIN_YEARLY_SEASONALITY_POINTS:
+            params["yearly_seasonality"] = False
 
-        future = model.make_future_dataframe(periods=periods, freq=cfg.FREQUENCY)
-        forecast = model.predict(future)
+        try:
+            model = Prophet(**params)
+            model.fit(frame)
+            future = model.make_future_dataframe(periods=periods, freq=cfg.FREQUENCY)
+            forecast = model.predict(future)
+        except Exception as exc:
+            logger.exception("Prophet fit/predict failed (%d points).", n_points)
+            raise RuntimeError(f"Prophet failed: {exc}") from exc
 
         tail = (
             forecast.tail(periods)[["ds", "yhat", "yhat_lower", "yhat_upper"]]
