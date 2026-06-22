@@ -284,3 +284,27 @@ existing session contracts for Step 7 documentation/deployment.
 
 All 7 implementation steps delivered. Platform is ready for local deployment
 and demonstration.
+
+---
+
+## Entry 009 — Bug Fixes, RAG Chatbot & Theme (Development Branch)
+**Timestamp:** 2026-06-22 (UTC)
+**Title:** Phase 1–5: UI fixes, lightweight RAG, chat, theme switching
+
+**Content:**
+- **Phase 1 bug fixes (AI-assisted):**
+  - Metric cards: `st.html` + HTML escaping so captions render styled (not literal tags).
+  - Prophet: disable yearly seasonality when &lt;24 monthly points; surface real exception text.
+  - Forecast accuracy labels unified (`Forecast Accuracy` vs `Data Sufficiency`) across Forecasting + AI Insights.
+  - Plotly charts: opaque surface background, min-height CSS, removed broken chart-container wrapper on Forecasting.
+  - Upload: removed duplicate Analytics link; compact date-range KPI styling.
+  - Forecast metadata: human-readable timestamps.
+  - Forecasting: fall back to `generate_forecast` when comparison model fails.
+- **Phase 2 RAG:** `embeddings` SQLite table, `rag/retriever.py` — Ollama `nomic-embed-text` embeddings, cosine retrieval; indexed on upload/analytics/forecast/AI.
+- **Phase 3 Chat:** `pages/7_Ask_ForecastIQ.py`, `ai/chat_engine.py`, `chat()` on Groq/Ollama providers; session-scoped history cleared on re-upload.
+- **Phase 4 Theme:** functional Dark/Light toggle in Settings, `user_preferences` table, centralized `inject_premium_css(theme_mode)`.
+- **Phase 5:** loading spinners on forecast/AI/chat; metric caption CSS polish.
+
+**Reason:** Grading deliverable — fix demo-breaking UI/model issues and add RAG chat + theme without new heavy dependencies.
+
+**Branch:** `development` only (main untouched).

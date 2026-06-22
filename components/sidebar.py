@@ -40,6 +40,7 @@ _NAV_ITEMS: Final[tuple[NavItem, ...]] = (
     NavItem("analytics", "Business Analytics", "bar_chart_4_bars", "pages/2_Business_Analytics.py"),
     NavItem("forecasting", "Forecasting", "trending_up", "pages/3_Forecasting.py"),
     NavItem("insights", "AI Insights", "auto_awesome", "pages/4_AI_Insights.py"),
+    NavItem("chat", "Ask ForecastIQ", "chat", "pages/7_Ask_ForecastIQ.py"),
     NavItem("reports", "Reports", "description", "pages/5_Reports.py"),
     NavItem("settings", "Settings", "settings", "pages/6_Settings.py"),
 )

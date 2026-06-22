@@ -12,7 +12,7 @@ from typing import Final
 # --------------------------------------------------------------------------- #
 # DDL
 # --------------------------------------------------------------------------- #
-SCHEMA_VERSION: Final[int] = 1
+SCHEMA_VERSION: Final[int] = 2
 
 CREATE_TABLES_SQL: Final[str] = """
 CREATE TABLE IF NOT EXISTS datasets (
@@ -73,6 +73,21 @@ CREATE TABLE IF NOT EXISTS reports (
 CREATE TABLE IF NOT EXISTS schema_meta (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS embeddings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    dataset_id INTEGER,
+    source_type TEXT NOT NULL,
+    chunk_text TEXT NOT NULL,
+    embedding_json TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS user_preferences (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 """
 

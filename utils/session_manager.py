@@ -46,6 +46,9 @@ REPORT_DATA: Final[str] = "report_data"
 REPORT_HISTORY: Final[str] = "report_history"
 GENERATED_REPORTS: Final[str] = "generated_reports"
 DATABASE_STATUS: Final[str] = "database_status"
+DATASET_ID: Final[str] = "dataset_id"
+CHAT_HISTORY: Final[str] = "chat_history"
+CHAT_DATASET_KEY: Final[str] = "chat_dataset_key"
 ERROR_STATE: Final[str] = "error_state"
 LOADING_STATE: Final[str] = "loading_state"
 
@@ -80,6 +83,9 @@ _DEFAULTS: Final[dict[str, Any]] = {
     REPORT_HISTORY: None,
     GENERATED_REPORTS: None,
     DATABASE_STATUS: None,
+    DATASET_ID: None,
+    CHAT_HISTORY: None,
+    CHAT_DATASET_KEY: None,
     ERROR_STATE: None,
     LOADING_STATE: False,
 }
@@ -94,9 +100,16 @@ def init_session_state() -> None:
     Safe to call at the top of *every* page render. Existing values are
     preserved; only missing keys are created.
     """
+    from database import preferences_repository
+
     for key, default in _DEFAULTS.items():
         if key not in st.session_state:
             st.session_state[key] = default
+    # Restore persisted theme on first load.
+    if st.session_state.get(THEME_MODE) == _DEFAULTS[THEME_MODE]:
+        saved = preferences_repository.get_preference("theme_mode")
+        if saved in ("dark", "light"):
+            st.session_state[THEME_MODE] = saved
 
 
 def reset_session_state(*, keep_theme: bool = True) -> None:

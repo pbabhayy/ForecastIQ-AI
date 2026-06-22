@@ -28,12 +28,18 @@ def _bootstrap() -> None:
 
 def _render_appearance() -> None:
     theme.section_header("Appearance", "Visual preferences")
-    c1, c2 = st.columns(2)
-    with c1:
-        st.selectbox("Theme", ("Dark (default)", "Light"), key="settings_theme")
-    with c2:
-        st.selectbox("Accent color", ("Blue", "Violet", "Emerald"), key="settings_accent")
-    st.caption("Appearance controls are stored for a future release.")
+    current = str(session_manager.get_state(session_manager.THEME_MODE, "dark")).lower()
+    options = ("Dark (default)", "Light")
+    index = 1 if current == "light" else 0
+    choice = st.selectbox("Theme", options, index=index, key="settings_theme_select")
+    new_mode = "light" if choice.startswith("Light") else "dark"
+    if new_mode != current:
+        from database import preferences_repository
+
+        session_manager.set_state(session_manager.THEME_MODE, new_mode)
+        preferences_repository.set_preference("theme_mode", new_mode)
+        st.rerun()
+    st.caption("Theme is saved locally and applied across all pages.")
 
 
 def _render_providers() -> None:
