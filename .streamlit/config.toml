@@ -1,0 +1,23 @@
+# ForecastIQ AI — Streamlit base theme
+# A minimal, neutral base; the premium look is driven by custom CSS
+# injected at runtime (see app.py / assets/styles.css in later steps).
+
+[theme]
+base = "dark"
+primaryColor = "#3B82F6"
+backgroundColor = "#0B0F19"
+secondaryBackgroundColor = "#111827"
+textColor = "#F9FAFB"
+font = "sans serif"
+
+[server]
+maxUploadSize = 50
+enableXsrfProtection = true
+enableCORS = false
+
+[browser]
+gatherUsageStats = false
+
+[client]
+showErrorDetails = false
+toolbarMode = "minimal"

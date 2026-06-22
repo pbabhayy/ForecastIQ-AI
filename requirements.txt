@@ -1,0 +1,35 @@
+# ============================================================
+# ForecastIQ AI — Python Dependencies
+# ------------------------------------------------------------
+# Recommended runtime: Python 3.11 or 3.12
+# (Prophet / pandas / numpy / scikit-learn wheels for 3.14
+#  are not yet broadly available — see DEPLOYMENT guide.)
+# ============================================================
+
+# --- Web / UI framework -------------------------------------
+streamlit==1.39.0
+
+# --- Visualization ------------------------------------------
+plotly==5.24.1
+kaleido==0.2.1            # static chart export for PDF embedding
+
+# --- Data processing ----------------------------------------
+pandas==2.2.3
+numpy==1.26.4
+openpyxl==3.1.5          # XLSX ingestion engine
+
+# --- Machine learning / forecasting -------------------------
+scikit-learn==1.5.2      # Linear Regression, Random Forest forecasters
+prophet==1.1.6           # Prophet forecaster
+# xgboost                # (reserved — future pluggable model)
+
+# --- AI provider abstraction --------------------------------
+groq==0.11.0             # PRIMARY provider
+ollama==0.3.3            # SECONDARY provider (local/self-hosted)
+# Rule-based deterministic engine has NO dependency (always available).
+
+# --- PDF report generation ----------------------------------
+reportlab==4.2.5
+
+# --- Configuration / environment ----------------------------
+python-dotenv==1.0.1
