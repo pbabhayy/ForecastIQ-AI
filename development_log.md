@@ -308,3 +308,21 @@ and demonstration.
 **Reason:** Grading deliverable — fix demo-breaking UI/model issues and add RAG chat + theme without new heavy dependencies.
 
 **Branch:** `development` only (main untouched).
+
+---
+
+## Entry 010 — Default Ollama Model + Final Smoke Test
+**Timestamp:** 2026-06-22 (UTC)
+**Title:** Wire qwen3:8b as default chat/insights model + submission smoke test
+
+**Content:**
+- Set default `OLLAMA_MODEL` to **qwen3:8b** in `config/settings.py` and `.env.example` (RAG embeddings remain **nomic-embed-text** in `rag/retriever.py`).
+- Ran full pipeline smoke test on `sample_dataset_extended.csv` with Ollama running:
+  - App boots via `streamlit run app.py` (no startup errors).
+  - AI Insights provider badge resolves to **Ollama** (Groq skipped — no key).
+  - RAG: 14 embedding chunks written; chat answer cited **92.92% revenue growth** from retrieved context.
+  - PDF export succeeded.
+  - Light/dark theme CSS palettes verified (`inject_premium_css` switches `_LIGHT_CSS` / `_PREMIUM_CSS`).
+- No additional bugs required fixes in this pass.
+
+**Reason:** Final wiring before submission on `development` branch.

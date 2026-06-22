@@ -36,7 +36,7 @@ def get_settings() -> Settings:
         groq_api_key=os.getenv("GROQ_API_KEY", "").strip(),
         groq_model=os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
         ollama_base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434").strip(),
-        ollama_model=os.getenv("OLLAMA_MODEL", "llama3.1"),
+        ollama_model=os.getenv("OLLAMA_MODEL", "qwen3:8b"),
         ai_provider_order=tuple(p.strip() for p in order.split(",") if p.strip()),
         log_level=os.getenv("LOG_LEVEL", "INFO"),
         db_path=os.getenv("FORECASTIQ_DB_PATH", "database/forecastiq.db"),
